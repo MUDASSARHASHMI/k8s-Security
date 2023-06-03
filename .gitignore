@@ -1,2 +1,2 @@
-/.idea
-.idea
+# Git ignore for ./idea folder
+.idea/*
