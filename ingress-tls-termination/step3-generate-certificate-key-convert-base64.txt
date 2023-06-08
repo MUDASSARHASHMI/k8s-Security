@@ -1,0 +1,5 @@
+1. Create a certificate and key.
+  openssl req -nodes -new -x509 -keyout tls-ingress.key -out tls-ingress.crt -subj "/CN=ingress.test"
+2. Get a base64-encoded string for both the certificate and the key.
+  base64 tls-ingress.crt
+  base64 tls-ingress.key
