@@ -8,4 +8,4 @@ spec:
   hostPID: true
   containers:
   - name: nginx
-    image: nginx
+    image: nginx:stable
