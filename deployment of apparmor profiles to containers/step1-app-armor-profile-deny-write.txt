@@ -1,0 +1,11 @@
+1. Command to run to enforce profile:
+  sudo apparmor_parser /etc/apparmor.d/deny-write
+
+
+#include <tunables/global>
+profile deny-write flags=(attach_disconnected) {
+#include <abstractions/base>
+file,
+# Deny all file writes.
+deny /** w,
+}
