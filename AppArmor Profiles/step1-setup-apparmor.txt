@@ -1,0 +1,25 @@
+AppArmor supports access controls for:
+1. Files
+2. Linux capabilities
+3. network
+4. Mount, remount and umount
+5. pivot_root
+6. ptrace
+7. signal
+8. DBus
+9. unix domain sockets
+
+In addition:
+Variables (eg @{HOME} can be defined and manipulated outside the profile
+(#include <tunables/global> for @{PROC} and @{HOME})
+explicit deny rules are supported to override allow rules (eg access to
+@{HOME}/bin/bad.sh is denied with auditing due to audit deny
+@{HOME}/bin/** mrwkl, even though general access to @{HOME} is permitted with
+@{HOME}/** rw,) include files are supported to ease development and simplify
+profiles (ie #include <abstractions/base>,
+#include <abstractions/nameservice>,
+#include <abstractions/user-tmp>)
+profiles can be loaded at boot time (eg apparmor=1 security=apparmor
+To install AppArmor following is command:
+sudo apt install apparmor-easyprof apparmor-notify apparmor-utils certspotter
+

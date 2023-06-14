@@ -1,0 +1,53 @@
+# Generating a basic profile:
+# The easiest way to get started is to create a skeleton profile, set AppArmor to
+# complain mode for your target and then use the aa-logprof tool to evaluate the
+# denials.
+
+# We’ll use aa-easyprof to generate the skeleton policy; let’s see what it
+# generates (be sure to specify the absolute path to the application):
+# Following is the command to generate a basic profile:
+# $ aa-easyprof /usr/bin/certspotter
+
+# The output will look something like this:
+# Reading log entries from /var/log/audit/audit.log.
+Here is the AppArmor Profile:
+
+# vim:syntax=apparmor
+# AppArmor policy for certspotter
+# ###AUTHOR###
+# ###COPYRIGHT###
+# ###COMMENT###
+
+#include <tunables/global>
+
+# No template variables specified
+
+"/usr/bin/certspotter" {
+#include <abstractions/base>
+
+# No abstractions specified
+
+# No policy groups specified
+
+# No read paths specified
+
+# No write paths specified
+}
+
+Looks pretty basic, so let’s write that output into the profile file (the
+name of the file can be anything; it is the contents of the file which matter):
+
+$ aa-easyprof /usr/bin/certspotter > usr.bin.certspotter
+$ sudo mv usr.bin.certspotter /etc/apparmor.d
+
+and then load the profile into the kernel:
+
+$ sudo apparmor_parser -r /etc/apparmor.d/usr.bin.certspotter
+
+Trying to run certspotter, results in an immediate (safe) crash.
+
+$ certspotter
+certspotter: /home/testuser/.certspotter/watchlist: open /home/testuser/.certspotter/watchlist permission denied
+
+This basic profile doesn’t allow certspotter access to resources it needs, so
+let’s look at the AppArmor denial messages to see what went wrong.
