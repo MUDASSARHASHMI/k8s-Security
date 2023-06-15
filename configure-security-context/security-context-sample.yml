@@ -1,0 +1,17 @@
+# spec.securityContext - configures security context at pod level.
+# These settings apply to all containers in the pod.
+# runAsUser sets custom OS user ID which will be used to run the container process.
+# spec.containers[].securityContext - configures security context at container level.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  securityContext:
+    runAsUser: 1000
+  containers:
+  - name: nginx
+    image: nginx:stable
+    securityContext:
+      runAsUser: 2000
+
