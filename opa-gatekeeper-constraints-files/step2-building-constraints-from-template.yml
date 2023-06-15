@@ -1,0 +1,22 @@
+# Constraint attaches the logic in a Constraint Template to incoming k8s objects alongside any parameters
+# defined in the Constraint Template.
+
+# A Constraint Template creates a new k8s object kind named K8sRequiredLabels that we can use to create
+# Constraint object.
+
+# match determines which new object(s) the constraint will apply to. In this case, Deployments.
+
+# parameters are the parameters that will be passed to the constraint template. In this case, the
+# required label(s) in this case its ["contacts"].
+
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: dep-must-have-contact
+spec:
+  match:
+    kinds:
+    - apiGroups: [""]
+      kinds: ["Deployment"]
+  parameters:
+    labels: ["contact"]

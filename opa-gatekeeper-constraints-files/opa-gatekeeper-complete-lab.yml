@@ -1,0 +1,116 @@
+# Using OPA Gatekeeper
+# Relevant Documentation
+# OPA Gatekeeper Docs - https://github.com/open-policy-agent/gatekeeper
+# Exam Tips
+# - Open Policy Agent (OPA) Gatekeeper allows you to enforce custom policies on any k8s object at creation time.
+# - Constraint templates define reusable constraint logic and any parameters that can be passed in.
+# - Constraint objects apply a constraint template to a specific group of potential incoming objects, alongside specific parameters.
+# Install OPA Gatekeeper
+# Deploy OPA Gatekeeper to the cluster.
+## kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/release-3.5/deploy/gatekeeper.yaml
+# Check the status of the OPA Gatekeeper Pods and wait for them all to come up fully.
+## kubectl get pods -n gatekeeper-system -w
+# Create a ConstraintTemplate
+# Create a ConstraintTemplate that can be used to enforce requirements for labels on objects.
+##vi k8srequiredlabels.yml
+
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequiredlabels
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredLabels
+      validation:
+        # Schema for the `parameters` field
+        openAPIV3Schema:
+          properties:
+            labels:
+              type: array
+              items: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequiredlabels
+
+        violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+          provided := {label | input.review.object.metadata.labels[label]}
+          required := {label | label := input.parameters.labels[_]}
+          missing := required - provided
+          count(missing) > 0
+          msg := sprintf("you must provide labels: %v", [missing])
+        }
+
+## kubectl create -f k8srequiredlabels.yml
+# Create a Constraint
+# Create a constraint from the ConstraintTemplate that requires Deployments to have a label called contact .
+## vi dep-must-have-contact.yml
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: dep-must-have-contact
+spec:
+  match:
+    kinds:
+    - apiGroups: ["apps"]
+      kinds: ["Deployment"]
+  parameters:
+    labels: ["contact"]
+---
+## kubectl create -f dep-must-have-contact.yml
+# Test the Constraint
+# Create a Deployment without a contact label.
+## vi opa-test-deployment.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opa-test-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opa-test
+  template:
+    metadata:
+      labels:
+        app: opa-test
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+---
+## kubectl create -f opa-test-deployment.yml
+# This should fail, since the Deployment does not have the required label.
+# Edit the Deployment manifest and add the label.
+## vi opa-test-deployment.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opa-test-deployment
+  labels:
+    contact: Pat_Deployerson
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opa-test
+  template:
+    metadata:
+      labels:
+        app: opa-test
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+# Try to create the Deployment again. This time it should work!
+# kubectl create -f opa-test-deployment.yml
