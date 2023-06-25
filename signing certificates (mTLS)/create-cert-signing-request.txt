@@ -1,0 +1,38 @@
+1. Install tools
+    sudo apt-get install -y golang-cfssl
+2. Generate CSR:
+   cat <<EOF | cfssl genkey - | cfssljson -bare server
+{
+    "hosts": [
+        "tls-svc.tls-test.svc.cluster.local",
+        "tls-pod.tls-test.pod.cluster.local",
+        "192.0.2.24",
+        "10.0.34.2"
+    ],
+    "CN": "system:node:tls-pod.tls-test.pod.cluster.local",
+    "key": {
+        "algo": "ecdsa",
+        "size": 256
+    },
+    "names": [
+        {
+            "O": "system:nodes"
+        }
+    ]
+}
+EOF
+3. Convert certificate (csr) file to base64:
+    cat server.csr | base64
+4. Copy base64 version of server.csr and paste it to the CSR K8s object file tls-svc-csr.yml
+attached.
+5. Check if certificate is successfully created with
+    kubectl get csr # It will show in Pending state
+6. Approve certificate with
+    kubectl certificate approve tls-svc-csr # It will show in Approved state
+7. To see certificate details:
+    kubectl get csr tls-svc-csr -o yaml
+8. To see a json path expression of the certificate:
+    kubectl get csr tls-svc-csr -o jsonpath='{.status.certificate}'
+9. To see decoded version from base64:
+    kubectl get csr tls-svc-csr -o jsonpath='{.status.certificate}' | base64 --decode'
+
