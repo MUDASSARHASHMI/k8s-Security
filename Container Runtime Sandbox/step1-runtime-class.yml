@@ -1,0 +1,12 @@
+# A RuntimeClass defines a runtime configuration. We can apply the RuntimeClass to Pods to make
+# them use the sandboxed runtime.
+
+# "name" is the name of the RuntimeClass to be used when we apply it to Pods.
+
+# "handler" refers to a section in the "containerd" configuration file that configures runsc.
+
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  name: my-runtimeclass
+handler: my-configuration

@@ -1,0 +1,12 @@
+# Here we are using runtimeClassName in a Pod spec to provide RuntimeClass for the Pod and
+# allow it to use sandboxed runtime.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-volume-pod
+spec:
+  runtimeClassName: my-runtimeclass
+  containers:
+  - name: busybox
+    image: busybox

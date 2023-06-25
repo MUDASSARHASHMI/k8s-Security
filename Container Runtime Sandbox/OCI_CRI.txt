@@ -1,0 +1,39 @@
+What is gVisor:
+gVisor is an application kernel, written in Go, that implements a substantial portion of the
+Linux system call interface. It provides an additional layer of isolation between running
+applications and the host operating system.
+
+gVisor includes an Open Container Initiative (OCI) runtime called runsc that makes it easy to
+work with existing container tooling. The runsc runtime integrates with Docker and Kubernetes,
+making it simple to run sandboxed containers.
+
+gVisor can be used with Docker, Kubernetes, or directly using runsc. Use the links below to
+see detailed instructions for each of them:
+
+1. Docker: The quickest and easiest way to get started.
+2. Kubernetes: Isolate Pods in your K8s cluster with gVisor.
+3. OCI Quick Start: Expert mode. Customize gVisor for your environment.
+
+
+Open Container Initiative:
+The Open Container Initiative is an open governance structure for the express purpose of creating
+open industry standards around container formats and runtimes.
+
+Established in June 2015 by Docker and other leaders in the container industry, the OCI currently
+contains three specifications: the Runtime Specification (runtime-spec), the Image Specification
+(image-spec) and the Distribution Specification (distribution-spec). The Runtime Specification
+outlines how to run a “filesystem bundle” that is unpacked on disk. At a high-level an OCI
+implementation would download an OCI Image then unpack that image into an OCI Runtime
+filesystem bundle. At this point the OCI Runtime Bundle would be run by an OCI Runtime.
+
+Container Runtime Interface (CRI):
+You can set a different RuntimeClass between different Pods to provide a balance of
+performance versus security. For example, if part of your workload deserves a high level of
+information security assurance, you might choose to schedule those Pods so that they run in
+a container runtime that uses hardware virtualization. You'd then benefit from the extra
+isolation of the alternative runtime, at the expense of some additional overhead.
+
+You can also use RuntimeClass to run different Pods with the same container runtime but with different settings.
+
+ Links: https://opencontainers.org/
+        https://kubernetes.io/docs/concepts/containers/runtime-class/
