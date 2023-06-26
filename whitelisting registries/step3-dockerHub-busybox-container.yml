@@ -1,0 +1,11 @@
+# With previous restrictions implemented we can create any image from "docker.io" registry
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dh-busybox
+spec:
+  restartPolicy: Never
+  containers:
+  - name: dh-busybox
+    image: docker.io/library/busybox
+    command: ['sh', '-c', 'sleep 3600']

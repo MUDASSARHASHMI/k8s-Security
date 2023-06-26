@@ -1,0 +1,12 @@
+# We can provide the image hash to validate if image is signed.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: signed-image-pod
+spec:
+  restartPolicy: Never
+  containers:
+  - name: busybox
+    image: busybox@sha256:4bdd623b0b1a455c256e2a1acfc8a46eeefbdcbfca1c5f0a52aeeb00f1bfa0f6
+    command: ['sh', '-c', 'echo "Hello, World!"']

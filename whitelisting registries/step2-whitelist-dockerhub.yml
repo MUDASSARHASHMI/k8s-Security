@@ -1,0 +1,13 @@
+# In this constraint we will whitelist DockerHub
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sAllowedRepos
+metadata:
+  name: whitelist-dockerhub
+spec:
+  match:
+    kind:
+    - apiGroups: [""]
+      kind: ["Pod"]
+  parameters:
+    repos:
+    - "docker.io"

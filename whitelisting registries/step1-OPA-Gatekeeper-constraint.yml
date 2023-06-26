@@ -1,0 +1,40 @@
+# This is default constraint template for OPA Gatekeeper
+# It will not allow any image other than nginx:1.14.2
+# This is a very basic example of whitelisting registries
+# Parameters are passed as a list of strings under OpenAPIV3Schema [properties.repos.type: array]
+# Restriction applies to both initContainers and containers in target: secion with types of containers
+
+
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sallowedrepos
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sAllowedRepos
+      validation:
+      # Schema for the `parameters` field
+        openAPIV3Schema:
+          properties:
+            repos:
+            type: array
+            items:
+              type: string
+  targets:
+  - target: admission.k8s.gatekeeper.sh
+    rego: |
+      package k8sallowedrepos
+      violation[{"msg": msg}] {
+        container := input.review.object.spec.containers[_]
+        satisfied := [good | repo = input.parameters.repos[_] ; good = startswith(container.image, repo)]
+        not any(satisfied)
+        msg := sprintf("container <%v> has an invalid image repo <%v>, allowed repos are %v", [container.name, container.image, input.parameters.repos])
+      }
+      violation[{"msg": msg}] {
+        container := input.review.object.spec.initContainers[_]
+        satisfied := [good | repo = input.parameters.repos[_] ; good = startswith(container.image, repo)]
+        not any(satisfied)
+        msg := sprintf("container <%v> has an invalid image repo <%v>, allowed repos are %v", [container.name, container.image, input.parameters.repos])
+      }

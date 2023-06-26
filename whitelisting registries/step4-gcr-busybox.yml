@@ -1,0 +1,12 @@
+# Since we've not whitelisted gcr.io the container will not be created even if we try
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gcr-busybox
+spec:
+  restartPolicy: Never
+  containers:
+  - name: gcr-busybox
+    image: gcr.io/google-containers/busybox
+    command: ['sh', '-c', 'sleep 3600']

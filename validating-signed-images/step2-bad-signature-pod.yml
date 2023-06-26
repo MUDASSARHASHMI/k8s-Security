@@ -1,0 +1,12 @@
+# Create a Pod with faulty signed image
+# If SHA256 key is not verified or tempred with still Pod will be created but it will show
+# error in "kubectl get pods" and "STATUS" will be "ErrImagePull"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-signature-pod
+spec:
+  restartPolicy: Never
+  containers:
+  - name: busybox
+    image: busybox:1.33.1@ssh256:2eed3c17cd8b978262caaed66dca91a6aa3f654f7898f3fabeb09151b31c32e3 # Tempred SHA key to test

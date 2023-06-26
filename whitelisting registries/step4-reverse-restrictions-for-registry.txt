@@ -1,0 +1,4 @@
+To reverse the restriction for only allow docker.io hosted images. We just need to delete
+the constraint:
+    $ kubectl delete K8sAllowedRepos whitelist-dockerhub
+Now we should be able to download images from any registry.
