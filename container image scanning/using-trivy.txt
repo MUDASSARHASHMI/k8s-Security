@@ -1,0 +1,18 @@
+Install Trivy on your control plane node:
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a
+/etc/apt/sources.list.d/trivy.list
+
+sudo apt-get update && sudo apt-get install -y trivy
+
+Scan an image with Trivy:
+
+Note: Some versions of Trivy may omit the image portion of the command. If you run into issues,
+    try trivy nginx:1.14.1 .
+    trivy image nginx:1.14.1
+
+If you need to get the image name and tag for an axisting container, you can do so using
+kubectl describe :
+    kubectl get pods
+    kubectl describe pod $pod_name
