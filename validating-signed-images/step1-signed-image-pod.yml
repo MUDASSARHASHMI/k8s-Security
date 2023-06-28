@@ -7,4 +7,4 @@ spec:
   containers:
   - name: busybox
     image: busybox:1.33.1@ssh256:2eed3c17cd8b978262caaed66dca91a6d23f654f7898f3fabeb09151b31c32e3
-    command: ['sh', '-c', 'echo "Hello, World!"']
+    command: ['sh', '-c', 'echo "Hello, `````````````````````World!"']

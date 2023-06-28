@@ -1,0 +1,18 @@
+1. To start setting it up first move the file to /etc/kubernetes/manifests/
+   $ sudo mv trivy-k8s-webhook.yaml /etc/kubernetes/manifests
+2. Let us make sure that ownership and permissions are correct
+   $ sudo chown root:root /etc/kubernetes/manifests/trivy-k8s-webhook.yaml
+   $ sudo chmod 600 /etc/kubernetes/manifests/trivy-k8s-webhook.yaml
+3. Now check if the file is picked up in manifests:
+   $ kubectl get pods -n kube-system trivy-k8s-webhook-k8s-control # which is the name of the node
+4. Image scanner must show its running as static Pod.
+5. To make it little more useable we will add an entry in /etc/hosts file
+   $ sudo vi /etc/hosts
+6. In the hosts add the hostname in the end like below:
+    127.0.0.1 acg.trivy.k8s.webhook
+7. We can reference above when we are configuring admission controller in the next step.
+8. Let us test our webhook with command below:
+    $ curl https://acg.trivy.k8s.webhook:8090/scan -X POST --header "Content-Type: application/json" -d
+'{"spec":{"containers":[{"image":"nginx:1.19.10"},{"image":"nginx:1.14.1"}]}}' -k
+9. In response we will see that the image has seroius vulnerabilities.
+10. It shows that the image scanner is working.
