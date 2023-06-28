@@ -14,7 +14,7 @@ All these certificates are included in the sample app "content-cks-trivy-k8s-web
     kind: AdmissionConfiguration
     plugins:
     - name: ImagePolicyWebhook
-        configuration:
+      configuration:
         imagePolicy:
             kubeConfigFile: /etc/kubernetes/admission-control/imagepolicywebhook_backend.kubeconfig
             allowTTL: 50
