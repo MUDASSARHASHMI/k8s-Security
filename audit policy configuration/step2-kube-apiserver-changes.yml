@@ -1,0 +1,28 @@
+1. Under the first line where it says "- kube-apiserver" add audit policy flag
+   --audit-policy-file=/etc/kubernetes/audit-policy.yml
+2. After above changes add one more line with
+   --audit-log-path=/var/log/k8s-audit.log
+3. Now add maxage flag to the audit log path line
+   --audit-log-maxage=30
+4. Now add maxbackup flag to the audit log path line
+  --audit-log-maxbackup=3
+5. Under the volume mount section add a volume mount for audit policy file
+    - name: audit-policy
+      mountPath: /etc/kubernetes/audit-policy.yml
+      readOnly: true
+6. Under the volumes section add a volume for audit log mount volume
+    - name: audit-log
+      mountPath: /var/log/k8s-audit
+      readOnly: false
+7. Under the volumes section add a volume for audit policy file
+    - name: audit-config
+      hostPath:
+        path: /etc/kubernetes/audit-policy.yml
+        type: FileOrCreate
+    - name: audit-log
+      hostPath:
+        path: /var/log/k8s-audit
+        type: DirectoryOrCreate
+8. Check the audit log file
+    sudo tail -f /var/log/k8s-audit/k8s-audit.log
+9. We will see that a lot of data is written to file as all the objects are communicating to API server.

@@ -1,0 +1,36 @@
+# Non imutable pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: immutability-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    securityContext:
+      privileged: true
+      allowPrivilegeEscalation: true
+      runAsUser: 0
+      readOnlyRootFilesystem: false
+---
+# Immutable pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: immutability-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    securityContext:
+      readOnlyRootFilesystem: true # Nginx does need to write to filesystem so we will create mounts for it.
+    volumeMounts:
+    - name: cache
+      mountPath: /var/cache/nginx
+    - name: run
+      mountPath: /var/run
+  volumes:
+  - name: cache
+    emptyDir: {}
+  - name: run
+    emptyDir: {}

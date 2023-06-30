@@ -1,0 +1,45 @@
+1. Falco needs to be installed where containers are running that is usually worker nodes.
+2. Add gpg key for Falco repository
+    $ curl -s https://falco.org/repo/falcosecurity-3672BA8F.asc | sudo apt-key add -
+3. Add Falco repository itself:
+    $ sudo add-apt-repository -y "deb https://download.falco.org/packages/deb stable main"
+4. Update apt cache:
+    $ sudo apt-get update -y
+5. Install Falco:
+    $ sudo apt-get -y install linux-headers-$(uname -r)
+    $ sudo apt-get -y install falco
+6. Start Falco:
+    $ sudo service falco start
+7. Login to control plane node to create a test pod:
+    $ vi falco-test-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: falco-test-pod
+spec:
+  nodeName: k8s-worker-1
+  containers:
+  - name: falco-test
+    image: busybox:1.33.1
+    command: ['sh', '-c', 'while true; do cat /etc/hosts; sleep 5; done']
+8. Create the pod:
+    $ kubectl apply -f falco-test-pod.yaml
+9. On k8s-worker-1 node, create Falco rule file:
+    $ vi /etc/falco/falco_rules.yaml
+    - rule: spawned_process_in_test_container
+      desc: A process was spawned in a test container
+      condition: container.name = "falco-test" and evt.type = execve
+      output: "%evt.time,%user.uid,%proc_name,%container.id,%container.name"
+      priority: WARNING
+10. Finally run Falco with rules
+    $ sudo falco -r falco_rules.yaml -M 45
+11. We will see that everytime after 5 seconds its executing shell command as created in
+Pod definition. Falco will generate an alert for this activity.
+12. To add more rules what we can do is to see all available variables for us
+    $ sudo falco --list
+13. To see all available rules:
+    $ sudo falco --list-rules
+14. To see all available sources:
+    $ sudo falco --list-sources
+15. To see all available fields:
+    $ sudo falco --list-fields
