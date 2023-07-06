@@ -1,0 +1,25 @@
+Objectives:
+1. Create a PodSecurityPolicy to Prevent Privileged Containers
+2. Use the PodSecurityPolicy to Secure a Namspace
+
+Objective1:
+Create a PodSecurityPolicy to Prevent Privileged Containers
+
+- To accomplish this objective we need to create a PodSecurityPolicy attached to this lab as
+"step1-nopriv-psp.yml".
+- With that first objetive is completed.
+
+Objective2:
+Use the PodSecurityPolicy to Secure a Namspace
+
+- As next step we need to create a service account to attach that security policy.
+- We will create "step2-hoth-sa.yml" for ServiceAccount attached to this lab.
+- Next we need to create a cluster role that will allow the usage of PodSecurityPolicy.
+- "step3-use-nopriv-psp-cluster-role.yml" is the file to create cluster role and attached to the lab.
+- Now we need to create a ClusterRoleBinding to bind the cluseter role to ServiceAccount.
+- Finally we completed the implementation of PodSecurityPolicy and now we need to test it with
+creating a Pod.
+- This Pod if failed then security policy will be working correctly sicnce in the Pod specs we
+set "privileged: true".
+    $ kubectl create -f pod-to-test-psp.yml
+- We get the forbidden message and Pod is not created.

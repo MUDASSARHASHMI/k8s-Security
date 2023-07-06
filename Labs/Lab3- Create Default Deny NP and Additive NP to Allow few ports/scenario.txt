@@ -1,0 +1,13 @@
+Problem1: Create a default deny network
+Solution1. A default deny policy in simplest manifest is attached to the lab.
+
+Problem2: Create a network policy to allow specific traffic
+Solution2: Before we run into creating an additive network policy we need to see labels available
+for "mordom" namespace that we can use while creating Network Policy.
+    $ kubectl get pod mtdoom -n mordom --show-labels
+Pod shows label "app=mtdoom" and we can use this lable to target our network policy to this Pod.
+Now we do need to allow traffic from namespace "mordom" to "frodo" so let us see available labels
+for "frodo" as well.
+    $ kubectl get namespace frodo --show-labels
+Now "frodo" namespace have "app=frodo" label available.
+A file is attached with this lab as mtdoom-np.yml for Network Policy between "mordom" and "frodo".

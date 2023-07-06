@@ -1,0 +1,34 @@
+Objectives:
+1. Add Rules to cluster's audit policy
+2. Configure audit logging
+
+
+Objective1:
+Add Rules to Cluster's Audit Policy:
+
+
+- Edit cluster's audit policy access the file at:
+    $ sudo vi /etc/kubernetes/audit-policy.yaml
+- Audit Policy file is attached to this lab as "audit-policy.yaml"
+
+
+Objective2:
+Configure audit logging
+
+
+- Configure Audit Log:
+    $ sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
+- File should look like this something:
+    - command:
+          - kube-apiserver
+          - --audit-policy-file=/etc/kubernetes/audit-policy.yaml
+          - --audit-log-path=/var/log/kubernetes/audit.log
+          - --audit-log-maxage=10
+          - --audit-log-maxbackup=1
+          - --advertise-address=10.0.1.101
+          - --allow-privileged=true
+          ....
+- To check if logs/audit setup successfully run comand below
+    $ sudo tail -f /var/log/kubernetes/audit.log
+- We should be able to see the logs.
+

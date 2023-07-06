@@ -1,0 +1,28 @@
+Objectives:
+1. Get a username and Password from an existing file
+2. Create a Secret and Mount it to a Pod
+
+
+Objective1:
+Get a username and Password from an existing file
+
+- Get the secret in Yaml output so we can see details
+    $ kubectl get secret -n namespace_name secret_name -o yaml
+- We can get the secrets and then we need to decode them from base64 as secrets are only accepted
+in base64 format.
+    $ echo YWRtaW4K | base64 --decode > username.txt
+    $ echo MTIzNDUK | base64 --decode > password.txt
+Objective2:
+Create a Secret and Mount it to a Pod
+
+- To create a secret we need to encode it with base64.
+    - echo dbuser | base64
+    - echo A83MaeKoz | base64
+- Now lets create a secret and for that we will create a yml file moe.yaml
+    $ kubectl create -f moe.yml
+- Lets create a Pod yaml to apply the secret attached as secret-pod.yml
+    $ kubectl create -f secret-pod.yml
+- Now lets see if the Secret is implemented on the secret-pod
+    $ kubectl logs -n larry secret-pod
+- It will pop up the user/pass we setup as secret. We actually cat the user/pass in pod spec
+command to see if its implemented.

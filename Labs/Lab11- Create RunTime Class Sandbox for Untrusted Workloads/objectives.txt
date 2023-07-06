@@ -1,0 +1,36 @@
+Objectives:
+1. Create a RunTime Class for Untrusted Workloads
+2. Configure Pods to use gVisor
+
+Objective1:
+Create a RunTime Class for Untrusted Workloads
+
+- Create a sandbox file.
+    $ vi sandbox.yml
+- Created file is attached with the lab. Just run it with kubectl to create RuntimeClass.
+    $ kubectl create -f sandbox.yml
+- hanlder "runsc" is already configured on the clusetr and not in scope of this lab. Also gVisor
+installation can be followed from official docs.
+- Objecive1 completed.
+
+Objective2:
+Configure Pods to use gVisor
+
+- We can get the Pods listed out in the "sunnydale" namespace which we need to move to sandbox.
+    $ kubectl get pods -n sunnydale
+- The Pods listed out seems to have some random charachters as their IDs. Which means these Pods
+are related to deployments in the namespace.
+- To check deployments we will run
+    $ kubectl get deployments -n sunnydale
+- If this is the case then its pretty easy to move a deployment to a sandbox using gVisor.
+    $ kubectl edit deployment -n sunnydale buffy
+- Under the main "spec.template.spec" before containers we will add this runtime class created
+earlier.
+    runtimeClassName: sandbox
+- If we run "kubectl get pods -n sunnydale". We will see the buffy is terminating for recreation.
+- Now we need to see if all the Pods are running in Sandbox.
+- We will simply use command to ensure that below:
+    $ kubectl exec -n sunnydale buffy-7dhg8fsdf-fhgl -- dmesg
+- It will print out on the first line of response something like:
+    [   0.00000]Starting gVisor....
+- So with that we have completed the objective.

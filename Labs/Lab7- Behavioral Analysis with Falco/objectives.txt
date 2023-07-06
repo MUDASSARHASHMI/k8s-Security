@@ -1,0 +1,20 @@
+Objectives:
+1. Create a Falco Rules file
+2. Log Activity from a suspicious container
+
+
+Objective1:
+Create a Falco Rules File:
+
+- Intalling Falco for Kubernetes is out of the scope of this Lab as its just copy paste from docs.
+- We simply need to create a Faclo rule file "monitor-rules.yml" attached to this lab.
+- After the rules created the first objective is completed.
+
+Objective2:
+Log Activity from a Suspicious Container
+
+- To see it in action we will implement Falco with following command
+    $ sudo falco -M 45 -r monitor-rules.yml > falco_output.log
+- After 45 seconds we can see the output file that is "falco_output.log" for all the spawned
+processes.
+- We can pull the log file to see what processes spawned during the time defined.

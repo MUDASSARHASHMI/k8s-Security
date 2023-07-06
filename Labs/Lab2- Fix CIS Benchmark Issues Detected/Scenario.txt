@@ -1,0 +1,36 @@
+A CIS benchmark contains guidance from the Center for Internet Security (CIS) on best
+practices for configuring IT systems, networks, and software. The CIS has released over
+140 benchmarks with the support of cybersecurity professionals and subject matter experts
+in communities worldwide.
+
+Problem1. Issues reported by CIS benchmark with few vulnerabilities for Kubelet.
+Such as kubelet is configured for authentication.
+Solution1: To access kubelet go to config file and make changes at "/var/lib/kubelet/config.yaml"
+    - Annonymous Authentication
+    - Turn Webhook to true under authorization
+    - Set authorization mode to "Webhook" from "AlwaysAllow"
+    - Restart the Kubelet server
+    - Check the status of kubelet server to make sure everything is fine.
+Problem2. Issue reported by CIS Benchmark for kube-apiserver. We need to turn off profiling as per
+suggested security considerations. Also ensure authorization mode is not set to "AlwaysAllow".
+Finally we need to make sure that authorization mode includes "Node" and "RBAC".
+
+Solution: Access the kube-apiserver manifest at /etc/kubernetes/manifests/kube-apiserver.yaml.
+In the file under "spec.container.command" after first entry "kube-apiserver" add new flag.
+Objective1.    - --profiling=false
+Objective2.    - --authorization-mode=Node,RBAC
+
+Problem3. We need to fix CIS Benchmark issues for etcd.
+- We need to set client-auth-cert to true.
+
+Solution3:
+One of the major problem is that if we make changes to etcd manifest directly we run into issues as
+old etcd instance still occupies the port while shutting down and new instance keeps getting
+conflicts. Best suited solution is to get rid of etcd static pod and give it some time to shutdown
+so what we do is that we move static pod manifest for etcd:
+    $ sudo mv /etc/kubernetes/manifests/etcd.yaml /etc/kubernetes
+We can make our changes to etcd there.
+- We will go to /etcd/kubernetes/etcd.yaml # Second location where files was moved
+- set "client-cert-auth=true".
+- now we will move the file back to manifests folder
+    $ sudo mv /etc/kubernetes/etcd.yaml /etc/kubernetes/manifests/etcd.yaml

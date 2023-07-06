@@ -1,0 +1,54 @@
+There are two objectives to be acheived for this lab:
+Problem 1.
+We need to fix a Pod in the "sunnydale" namespace that has a "buffy-sa" ServiceAccount
+with permissions Pod does not need. We need to Modify attached role so that only has privilege
+to list Pods and nothing else. For now it has many permissions already.
+
+
+Solution1:
+- Switch to the correct context by listing contexts:
+    $ kubectl config get-contexts
+    $ kubectl config use-context context_name
+- Check the rolebindings in sunnydale namespace.
+    $ kubectl get rolebinding -n sunnydale
+- After it shows list of available rolebindings select the targetted rolebinding with
+"describe" flag.
+    $ kubectl describe rolebinding -n sunnydale buffy-rb
+- With the above command it will show the ServiceAccount associated with the Role. So we need
+to take a look at the role for details. After that lets edit it with "edit" flag.
+    $ kubectl edit role -n sunnydale buffy role_name
+- With edit we can see that it gives access to everything like:
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - "*"
+  verbs:
+  - "*"
+- Aestrik above means that it gives all the prmissions by default to all objects associated
+with the role. Since we need to allow only to list the Pods to this role we will add "pods" in
+resources and in "list" in verbs. Save and close.
+- Now we need to create another role with grangular permissions with the file attached to lab.
+- Create the role with:
+    $ kubectl create -f step1-role-watch-secvices-secrets.yml
+- Now we need to bind the Role we created above with RoleBinding attached to Lab1:
+    $ kubectl create -f step2-rolebinding-buffy-sa-watch-rb
+- Finally with that the Pod is restricted to specific role required instead of all roles.
+--------------------------------------------------------------------------
+Problem 2. We need to fix a Pod that is attached to incorrect ServiceAccount. We need to delete old
+ServiceAccount in a different Namespace and re-create the ServiceAccount.
+
+Solution 2:
+- First we need to check what exactly is the problem with already existing ServiceAccount
+    $ kubectl get serviceaccounts -n namespace_name
+- It will show the list of available ServiceAccounts. We can choose the ServiceAccount to
+delete it and will recreate it:
+    $ kubectl delete serviceaccounts -n namespace_name service_account_name
+- Now we will create a new service account:
+    $ kubectl create serviceaccount -n desired_namespace new_service_account
+- We can check the Pod manifest for details that what was the name it was using for the
+ServiceAccount
+- We will change the ServiceAccount name we created above in Pod Manifest or in PodSpecs.
+- In the Pod manifest we will edit the newly created ServiceAccount name.
+- We will create a the Pod.
+- Solution 2 completed.

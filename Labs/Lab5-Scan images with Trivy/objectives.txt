@@ -1,0 +1,23 @@
+1. Use Trivy to scan images used in Pods
+2. Delete Pods that have container images with svere vulnerabilities
+
+Objective1
+Use Trivy to Scan Images used in Pods in a Namespace:
+
+- First we have to look that what images are being used by the Pods in namespace.
+- One easy but time consuming way it to use "describe" flag for each of the Pod to see its image.
+- Second way is to just create a custom output from all Pods manifests for the image fields.
+    $ kubectl get pods -n sunnydale --output=custom-columns="NAME:.metadata.name,IMAGE:.spec.containers[*].image"
+- We will get a list of images used by pods in namespace.
+- Now we will use "Trivy" to scan images and we will only scan for high or critical level
+vulnerability.
+    $ trivy image -s HIGH,CRITICAL busybox:1.33.1
+    $ trivy image -s HIGH,CRITICAL nginx:1.14.2
+- We will get the result if its vulnerable or not.
+
+Objective2
+Delete Pods that have container images with svere vulnerabilities:
+- To delete a Pod with vulnerabilities:
+    $ kubectl delete pod -n namespace_name pod_name
+- We can also use "--force" flag but then the Pod will not be deleted gracefully instead it will
+instantly forcefully removed by the system.

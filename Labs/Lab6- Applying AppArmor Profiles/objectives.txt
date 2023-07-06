@@ -1,0 +1,27 @@
+Objectives:
+1. Enforce an AppArmor profile on worker node.
+2. Apply profile to a container
+
+Objective 1:
+Enforce an AppArmor profile on worker Node.
+
+Solution:
+AppArmor is a linux kernal security module. AppArmor can be used for any application to reduce its
+attack surface. AppArmor profile is created and attached with this lab docs.
+- To implement the AppArmor use:
+    $ sudo apparmor_parser k8s-deny-write
+- First objective is completed.
+
+Objective2:
+Apply profile to a container
+
+- First we will need to exit from worker node and we will log in to CLI server. (Its my environment)
+- Create a new Pod manifest file and attach AppArmor Profile to it like in the
+"apparmor-profile-implemented-pod.yml" file.
+- Now as write is denied so it won't even be able to write logs for the containers as defined in
+container specs.
+- In order to get logs in this situation we usually have to create a volumeMount but that is
+beyond from this lab.
+- Lets check logs
+    $ kubectl logs -n namespace_name pod_name
+- We will see multiple lines with "Permission Denied".

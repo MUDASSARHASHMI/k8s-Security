@@ -1,0 +1,44 @@
+Objectives:
+1. Analyze a Dockerfile for Security Best Practices
+2. Analyze a YAML file for Security Best Practices
+3. Ensure Containers are static and Immutable
+
+
+Objective1:
+Analyze a Dockerfile for Security Best Practices
+
+- Dockerfile attached to this lab require analysis for best practices.
+- The first issue in the Dockerfile is the use of ":latest" tag. We rather need to use fix
+number based release so we can see if there are some future updates for that release.
+- Second issue for the Dockerfile is use of "root" privileges in the end of Dockerfile.
+- We should never let Dockerfile have root access to system because that creates a lot of
+security concerns.
+- For now we will use "nobody" user at the end.
+- The first objective is completed.
+
+Objective2:
+Analyze a YAML file for Security Best Practices
+
+- The file "scooby-gang-deploy.yml" requires analysis for best practices.
+- One of the major mistake in "securityContext.privileged: true" is that we should never let
+it set to "privilege: true". We will set it to false.
+- Seoncd one is that we need to make sure no user has root access to containers as it shows
+in "securityContext.runAsUser: 0". We will set it to "nobody" user with ID 65534.
+
+Objective3:
+Ensure Containers are static and Immutable
+
+- Let us look Containers and Pods in "sunnydale" namespace.
+    $ kubectl get pods -n sunnydale
+- After listing out we can select each pod to see their details.
+    $ kubectl get pod -n synnydale -o yaml buffy
+- What we are looking for is to make sure none of the containers have special or elevated
+privileges and also we need to check that container should not be able to write its own file
+system.
+- So in securityContext "allowPrivilegeEscalation" should be false unless some special case.
+- In securityContext "runAsUser" shouldn't be set to "0" or root user.
+- In securityContext another important tag is "readOnlyRootFilesystm" which should be true.
+- If above criteria is met the container is considered as "mutable". Otherwise we cannot call
+a container mutable.
+- We will delete all the containers that do not meet the criteria for mutability.
+    $ kubectl delete pod -n namespace_name pod_name --force

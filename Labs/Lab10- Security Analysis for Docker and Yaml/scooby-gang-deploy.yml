@@ -1,0 +1,42 @@
+# Un-analyzed format
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scooby-gang
+  namespace: sunnydale
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: scooby
+  template:
+    metadata:
+      labels:
+        app: scooby
+    containers:
+    - name: scoobygang
+      image: scoobygang:1.4.0
+      securityContext:
+        privileged: true
+        runAsUser: 0
+# Analyzed Format
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scooby-gang
+  namespace: sunnydale
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: scooby
+  template:
+    metadata:
+      labels:
+        app: scooby
+    containers:
+    - name: scoobygang
+      image: scoobygang:1.4.0
+      securityContext:
+        privileged: false
+        runAsUser: 65534 # which is nobody user

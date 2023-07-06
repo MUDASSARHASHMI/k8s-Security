@@ -1,0 +1,39 @@
+Following are the Lab objectives.
+
+1. Configure Admission Controller
+2. Set the URL of the Image Scanning
+3. Enable the Admission Controller Plugin
+
+Objetive1:
+Configure Admission Controller:
+
+- Login to control plane server and check the path to admission-control.conf
+    $ sudo cat /etc/kubernetes/admission-control/admission-control.conf
+- Edit the imagepolicy.conf :
+    $ sudo vi /etc/kubernetes/admission-control/imagepolicy.conf
+- Our kubeconfig files location will be listed in config file at:
+    /etc/kubernetes/admission-control/imagepolicy_backend.kubeconfig
+- In "imagepolicy.conf" we need to set "defaultAllow" to "false" to make sure that images are
+denied without scanning for vulnerabilities.
+- Save and exit.
+
+Objective2:
+Set the URL of the Image Scanning:
+
+- Go to "kubeconfig_backend.kubeconfig" file.
+    $ sudo vi /etc/kubernetes/admission-control/imagepolicy_backend.kubeconfig
+- Go to "clusters.server" and set the external image scanning url
+    https://acg.trivy.k8s.webhook:8090/scan
+
+Objective3:
+Enable the Admission Controller Plugin:
+
+- Edit kube-apiserver manifest:
+    $ sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
+- Find the flag "--enable-admission-plugins" and add "ImagePolicyWebhook"
+    - --enable-admission-plugins=NodeRestriction,ImagePolicyWebhook
+- kube-apiserver will be unrsponsive for short amount of time.
+- To test if ImagePolicyWebhook is scanning images before pulling create two pods one with
+known vulnerabilities and one with no vulnerabilities as attached to this lab.
+- With vulnerabilities it won't let the pod to be created.
+- With no vulnerabilities it will be created successfully.
